@@ -11,7 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;		// Added to use the myql APIs with csharp.
 namespace mysqlDiagnosticWF
 {
 	/// <summary>
@@ -25,41 +25,39 @@ namespace mysqlDiagnosticWF
 			// The InitializeComponent() call is required for Windows Forms designer support.
 			//
 			InitializeComponent();
-			
 			//
 			// TODO: Add constructor code after the InitializeComponent() call.
 			//
 		}
 		void Button1Click(object sender, EventArgs e)
 		{
-			MySqlCommand comando;
-			MySqlDataReader lector;
-			
-			MySqlConnection conn;
-			string myConnectionString;
-			
+			MySqlCommand comando;				// 'comando' MysqlAPI Object var, used to execute querys
+			MySqlDataReader lector;				// 'lector' MysqlAPI Object var, used to scan the SQL result
+			MySqlConnection conn;				// 'conn' MysqlAPI Object var, used to make a connection
+			string myConnectionString;			// 'myConnectionString' String var, used to string connection
+			// String connection (host/IP, user, password) 
 			myConnectionString = "server=127.0.0.1;uid=root;" +
 			"pwd=usbw;database=test;";
-			try
+			try						// Used to trow exception when if some internal error 
 			{
-				conn = new MySqlConnection();
-				conn.ConnectionString = myConnectionString;
-				conn.Open();
-				comando = new MySqlCommand("select * from table1",conn);
-				lector=comando.ExecuteReader();
-				textBox1.Text = "";
-				string salida = "";
-				while(lector.Read())
+				conn = new MySqlConnection();					// Exec. the connection
+				conn.ConnectionString = myConnectionString;			// Exec. the string connection
+				conn.Open();							// Opening connection
+				comando = new MySqlCommand("select * from table1",conn);	// Exec. Query in the server
+				lector=comando.ExecuteReader();					// get the result 
+				textBox1.Text = "";						// Clean GUI 
+				string salida = "";						// 
+				while(lector.Read())						// Loop reading the results
 				{
-					salida = lector.GetInt32("id") +" " + lector.GetString("name");
-					textBox1.AppendText(salida +"\r\n");
-				}
-				lector.Close();
-				conn.Close();							
+					salida = lector.GetInt32("id") +" " + lector.GetString("name");	// get string to show
+					textBox1.AppendText(salida +"\r\n");				// next line
+				}		
+				lector.Close();							// Close result
+				conn.Close();							// Close connection
 			}
-			catch (MySql.Data.MySqlClient.MySqlException ex)
+			catch (MySql.Data.MySqlClient.MySqlException ex)			// If error occurs 
 			{
-			MessageBox.Show(ex.Message);
+			MessageBox.Show(ex.Message);						// Show in the GUI popup the error
 			}
 		}
 	}
